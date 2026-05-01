@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "PowerShell(npm install -g create-next-app 2>&1)",
+      "PowerShell(node \"c:\\\\Users\\\\Joel_&_Brenchus\\\\Desktop\\\\VERDUNUEVA\\\\node_modules\\\\next\\\\dist\\\\bin\\\\next\" dev --port 3000 2>&1)",
+      "PowerShell(Start-Sleep -Seconds 3; $pages = @\\(\"/\", \"/productos\", \"/carrito\", \"/checkout\", \"/contacto\", \"/admin\"\\); foreach \\($p in $pages\\) { $r = Invoke-WebRequest -Uri \"http://localhost:3000$p\" -TimeoutSec 15 -UseBasicParsing 2>&1; Write-Host \"$p -> $\\($r.StatusCode\\)\" })",
+      "PowerShell($src = 'C:\\\\Users\\\\Joel_&_Brenchus\\\\Desktop\\\\VERDUNUEVA'; $dst = 'C:\\\\VERDUNUEVA'; Get-ChildItem $src -Exclude 'node_modules','.next' | ForEach-Object { Copy-Item $_.FullName -Destination $dst -Recurse -Force }; Write-Host \"Archivos copiados\")"
+    ],
+    "additionalDirectories": [
+      "C:\\"
+    ]
+  }
+}
