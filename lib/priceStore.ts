@@ -48,8 +48,13 @@ function writeLocalCache(overrides: PriceOverrides) {
 
 /* ── Lectura ── */
 export async function loadOverrides(): Promise<PriceOverrides> {
-  // Devuelve cache en memoria si ya lo tenemos
   if (_cache) return _cache;
+
+  if (!supabase) {
+    const local = readLocalCache();
+    _cache = local;
+    return local;
+  }
 
   try {
     const { data, error } = await supabase
@@ -71,7 +76,6 @@ export async function loadOverrides(): Promise<PriceOverrides> {
     writeLocalCache(overrides);
     return overrides;
   } catch {
-    // Supabase no disponible → usar localStorage
     const local = readLocalCache();
     _cache = local;
     return local;
@@ -80,6 +84,11 @@ export async function loadOverrides(): Promise<PriceOverrides> {
 
 /* ── Escritura ── */
 export async function saveOverrides(overrides: PriceOverrides): Promise<void> {
+  if (!supabase) {
+    writeLocalCache(overrides);
+    return;
+  }
+
   const rows = Object.entries(overrides).map(([id, ov]) => ({
     id,
     price:         ov.price,
@@ -94,7 +103,6 @@ export async function saveOverrides(overrides: PriceOverrides): Promise<void> {
 
   if (error) throw error;
 
-  // Actualizar cache
   writeLocalCache(overrides);
 }
 
