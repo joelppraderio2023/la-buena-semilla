@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { products, categories } from "@/data/products";
-import { getPriceOverrides, savePriceOverrides, PriceOverrides, calcDescuento } from "@/lib/priceStore";
+import { loadOverrides, saveOverrides, invalidateCache, PriceOverrides, calcDescuento } from "@/lib/priceStore";
 
 const ADMIN_PASSWORD = "admin123";
 
@@ -12,11 +12,17 @@ export default function AdminPage() {
   const [error, setError]                 = useState("");
   const [overrides, setOverrides]         = useState<PriceOverrides>({});
   const [saved, setSaved]                 = useState(false);
+  const [loading, setLoading]             = useState(false);
   const [filterCat, setFilterCat]         = useState("todos");
   const [search, setSearch]               = useState("");
 
   useEffect(() => {
-    if (authenticated) setOverrides(getPriceOverrides());
+    if (authenticated) {
+      setLoading(true);
+      loadOverrides()
+        .then(setOverrides)
+        .finally(() => setLoading(false));
+    }
   }, [authenticated]);
 
   const handleLogin = (e: React.FormEvent) => {
@@ -47,10 +53,16 @@ export default function AdminPage() {
   const toggleOferta    = (id: string)               => update(id, { oferta: !getOferta(id) });
   const setPrecioOferta = (id: string, v: string)    => update(id, { precioOferta: parseFloat(v.replace(",", ".")) || 0 });
 
-  const handleSave = () => {
-    savePriceOverrides(overrides);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+  const handleSave = async () => {
+    try {
+      await saveOverrides(overrides);
+      invalidateCache();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error("Error guardando:", err);
+      alert("Error al guardar. Verificá tu conexión.");
+    }
   };
 
   const filteredProducts = products.filter((p) => {
@@ -118,6 +130,13 @@ export default function AdminPage() {
             </button>
           </div>
         </div>
+
+        {/* Loading */}
+        {loading && (
+          <div className="text-center py-10 text-verde/40 text-sm font-semibold">
+            Cargando precios desde la base de datos...
+          </div>
+        )}
 
         {/* Resumen de ofertas */}
         {ofertasActivas > 0 && (

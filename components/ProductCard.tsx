@@ -2,7 +2,7 @@
 
 import { Product } from "@/data/products";
 import { useCart } from "@/lib/CartContext";
-import { formatPrice, getPriceOverrides, calcDescuento } from "@/lib/priceStore";
+import { formatPrice, loadOverrides, calcDescuento } from "@/lib/priceStore";
 import { useState, useEffect } from "react";
 
 interface Props {
@@ -42,16 +42,17 @@ export default function ProductCard({ product }: Props) {
   const [precioOferta, setPrecioOferta] = useState(0);
 
   useEffect(() => {
-    const overrides = getPriceOverrides();
-    const ov = overrides[product.id];
-    if (ov) {
-      setDisplayPrice(ov.price);
-      setIsAvailable(ov.available);
-      if (ov.oferta && ov.precioOferta && ov.precioOferta > 0) {
-        setEnOferta(true);
-        setPrecioOferta(ov.precioOferta);
+    loadOverrides().then((overrides) => {
+      const ov = overrides[product.id];
+      if (ov) {
+        setDisplayPrice(ov.price);
+        setIsAvailable(ov.available);
+        if (ov.oferta && ov.precioOferta && ov.precioOferta > 0) {
+          setEnOferta(true);
+          setPrecioOferta(ov.precioOferta);
+        }
       }
-    }
+    });
   }, [product.id]);
 
   const inCart   = items.find((i) => i.id === product.id);
