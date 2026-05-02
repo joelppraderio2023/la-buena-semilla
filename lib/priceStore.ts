@@ -1,6 +1,8 @@
 export interface ProductOverride {
   price: number;
   available: boolean;
+  oferta?: boolean;
+  precioOferta?: number;
 }
 
 export type PriceOverrides = Record<string, ProductOverride>;
@@ -29,4 +31,9 @@ export function formatPrice(price: number): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
+}
+
+export function calcDescuento(original: number, oferta: number): number {
+  if (!original || !oferta || oferta >= original) return 0;
+  return Math.round((1 - oferta / original) * 100);
 }

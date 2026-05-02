@@ -27,7 +27,7 @@ export const products: Product[] = [
 
   // Verduras
   { id: "tomate", name: "Tomate Redondo", category: "verduras", price: 0, unit: "kg", description: "Tomates frescos para ensalada o cocción", emoji: "🍅", available: true, featured: true },
-  { id: "lechuga", name: "Lechuga", category: "verduras", price: 0, unit: "unidad", description: "Lechuga fresca y crocante", emoji: "🥬", available: true },
+  { id: "lechuga", name: "Lechuga", category: "verduras", price: 0, unit: "kg", description: "Lechuga fresca y crocante", emoji: "🥬", available: true },
   { id: "zanahoria", name: "Zanahoria", category: "verduras", price: 0, unit: "kg", description: "Zanahorias frescas y tiernas", emoji: "🥕", available: true },
   { id: "papa", name: "Papa", category: "verduras", price: 0, unit: "kg", description: "Papas blancas para hervir o freír", emoji: "🥔", available: true, featured: true },
   { id: "cebolla", name: "Cebolla", category: "verduras", price: 0, unit: "kg", description: "Cebollas blancas frescas", emoji: "🧅", available: true },
@@ -42,8 +42,8 @@ export const products: Product[] = [
   { id: "aceite-suave", name: "Aceite de Oliva Suave", category: "aceites", price: 0, unit: "500ml", description: "Aceite de oliva suave, ideal para cocinar", emoji: "🫒", available: true },
 
   // Miel
-  { id: "miel-flores", name: "Miel de Flores", category: "miel", price: 0, unit: "500g", description: "Miel natural de flores silvestres, sin procesar", emoji: "🍯", available: true, featured: true },
-  { id: "miel-silvestre", name: "Miel Silvestre", category: "miel", price: 0, unit: "250g", description: "Miel de abeja silvestre, sabor intenso y ahumado", emoji: "🍯", available: true },
+  { id: "miel-1kg", name: "Miel", category: "miel", price: 0, unit: "1kg", description: "Miel natural pura, sin procesar", emoji: "🍯", available: true, featured: true },
+  { id: "miel-500g", name: "Miel", category: "miel", price: 0, unit: "500g", description: "Miel natural pura, sin procesar", emoji: "🍯", available: true },
 
   // Condimentos
   { id: "oregano", name: "Orégano", category: "condimentos", price: 0, unit: "50g", description: "Orégano seco y aromático, para pizzas y carnes", emoji: "🌿", available: true },

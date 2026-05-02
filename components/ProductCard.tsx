@@ -2,7 +2,7 @@
 
 import { Product } from "@/data/products";
 import { useCart } from "@/lib/CartContext";
-import { formatPrice, getPriceOverrides } from "@/lib/priceStore";
+import { formatPrice, getPriceOverrides, calcDescuento } from "@/lib/priceStore";
 import { useState, useEffect } from "react";
 
 interface Props {
@@ -35,31 +35,42 @@ const categoryGradient: Record<string, string> = {
 
 export default function ProductCard({ product }: Props) {
   const { addItem, items } = useCart();
-  const [added, setAdded]           = useState(false);
+  const [added, setAdded]               = useState(false);
   const [displayPrice, setDisplayPrice] = useState(product.price);
   const [isAvailable, setIsAvailable]   = useState(product.available);
+  const [enOferta, setEnOferta]         = useState(false);
+  const [precioOferta, setPrecioOferta] = useState(0);
 
   useEffect(() => {
     const overrides = getPriceOverrides();
-    if (overrides[product.id]) {
-      setDisplayPrice(overrides[product.id].price);
-      setIsAvailable(overrides[product.id].available);
+    const ov = overrides[product.id];
+    if (ov) {
+      setDisplayPrice(ov.price);
+      setIsAvailable(ov.available);
+      if (ov.oferta && ov.precioOferta && ov.precioOferta > 0) {
+        setEnOferta(true);
+        setPrecioOferta(ov.precioOferta);
+      }
     }
   }, [product.id]);
 
-  const inCart = items.find((i) => i.id === product.id);
+  const inCart   = items.find((i) => i.id === product.id);
+  const descuento = enOferta ? calcDescuento(displayPrice, precioOferta) : 0;
+  const precioFinal = enOferta && precioOferta > 0 ? precioOferta : displayPrice;
 
   const handleAdd = () => {
-    addItem({ ...product, price: displayPrice });
+    addItem({ ...product, price: precioFinal });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
 
   return (
     <div
-      className={`group bg-white rounded-2xl overflow-hidden card-hover flex flex-col border border-crema-dark/40 transition-all duration-200 ${
-        !isAvailable ? "opacity-55" : ""
-      }`}
+      className={`group bg-white rounded-2xl overflow-hidden card-hover flex flex-col border transition-all duration-200 ${
+        enOferta
+          ? "border-terra/30 shadow-sm shadow-terra/10"
+          : "border-crema-dark/40"
+      } ${!isAvailable ? "opacity-55" : ""}`}
     >
       {/* Emoji area */}
       <div
@@ -68,6 +79,13 @@ export default function ProductCard({ product }: Props) {
         <span className="text-6xl group-hover:scale-110 transition-transform duration-300 inline-block drop-shadow-sm">
           {product.emoji}
         </span>
+
+        {/* Descuento badge */}
+        {enOferta && descuento > 0 && (
+          <span className="absolute top-2.5 left-2.5 bg-terra text-white text-[10px] font-black px-2 py-0.5 rounded-full leading-none">
+            -{descuento}%
+          </span>
+        )}
 
         {/* In-cart badge */}
         {inCart && (
@@ -80,7 +98,7 @@ export default function ProductCard({ product }: Props) {
         <span
           className={`absolute bottom-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
             categoryBadge[product.category]
-          }`}
+          } ${enOferta && descuento > 0 ? "left-auto right-2.5" : ""}`}
         >
           {categoryLabels[product.category]}
         </span>
@@ -98,18 +116,34 @@ export default function ProductCard({ product }: Props) {
 
         <div className="mt-auto space-y-2.5">
           {/* Price */}
-          <div className="flex items-baseline gap-1">
-            <span
-              className={`font-display font-black text-xl leading-none ${
-                displayPrice === 0 ? "text-terra text-sm font-sans font-semibold" : "text-verde"
-              }`}
-            >
-              {formatPrice(displayPrice)}
-            </span>
-            {displayPrice > 0 && (
-              <span className="text-[11px] text-texto/35 font-medium">
-                / {product.unit}
-              </span>
+          <div className="flex items-baseline gap-2 flex-wrap">
+            {enOferta && precioOferta > 0 ? (
+              <>
+                <span className="font-display font-black text-xl leading-none text-terra">
+                  {formatPrice(precioOferta)}
+                </span>
+                {displayPrice > 0 && (
+                  <span className="text-[11px] text-texto/35 line-through">
+                    {formatPrice(displayPrice)}
+                  </span>
+                )}
+                <span className="text-[10px] text-texto/35">/ {product.unit}</span>
+              </>
+            ) : (
+              <>
+                <span
+                  className={`font-display font-black text-xl leading-none ${
+                    displayPrice === 0 ? "text-terra text-sm font-sans font-semibold" : "text-verde"
+                  }`}
+                >
+                  {formatPrice(displayPrice)}
+                </span>
+                {displayPrice > 0 && (
+                  <span className="text-[11px] text-texto/35 font-medium">
+                    / {product.unit}
+                  </span>
+                )}
+              </>
             )}
           </div>
 
@@ -122,14 +156,12 @@ export default function ProductCard({ product }: Props) {
                 ? "bg-crema-dark text-texto/30 cursor-not-allowed"
                 : added
                 ? "bg-verde-light text-white scale-[0.97]"
+                : enOferta
+                ? "bg-terra hover:bg-terra-dark text-white active:scale-95"
                 : "bg-verde text-white hover:bg-verde-mid active:scale-95"
             }`}
           >
-            {!isAvailable
-              ? "Sin stock"
-              : added
-              ? "✓ Agregado"
-              : "Agregar al carrito"}
+            {!isAvailable ? "Sin stock" : added ? "✓ Agregado" : "Agregar al carrito"}
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import {
   products,
   categories,
@@ -9,6 +10,60 @@ import {
   STORE_HOURS,
 } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
+import { getPriceOverrides } from "@/lib/priceStore";
+
+function OfertasDelDia() {
+  const [ofertaIds, setOfertaIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const overrides = getPriceOverrides();
+    const ids = products
+      .filter((p) => {
+        const ov = overrides[p.id];
+        return ov?.oferta && ov?.precioOferta && ov.precioOferta > 0 && ov.available !== false;
+      })
+      .map((p) => p.id);
+    setOfertaIds(ids);
+  }, []);
+
+  if (ofertaIds.length === 0) return null;
+
+  const ofertaProducts = products.filter((p) => ofertaIds.includes(p.id));
+
+  return (
+    <section className="py-16 relative overflow-hidden">
+      {/* Warm background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-terra/8 via-crema to-crema pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-terra/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-terra/20 to-transparent" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-2xl">🔥</span>
+              <p className="text-terra font-bold text-[11px] uppercase tracking-[0.14em]">
+                Solo por hoy
+              </p>
+            </div>
+            <h2 className="font-display text-4xl sm:text-5xl text-verde font-black">
+              Ofertas del día
+            </h2>
+          </div>
+          <span className="hidden sm:flex items-center justify-center bg-terra text-white text-xs font-black px-3 py-1.5 rounded-full">
+            {ofertaProducts.length} oferta{ofertaProducts.length !== 1 ? "s" : ""}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {ofertaProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 const heroEmojis = [
   "🍎", "🥦", "🍊", "🥕",
@@ -176,6 +231,8 @@ export default function HomePage() {
           ))}
         </div>
       </div>
+
+      <OfertasDelDia />
 
       {/* ── CATEGORÍAS ───────────────────────────────────── */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6">
