@@ -9,27 +9,35 @@ interface Props {
   product: Product;
 }
 
-const categoryColors: Record<string, string> = {
-  frutas: "bg-orange-100 text-orange-700",
-  verduras: "bg-green-100 text-green-700",
-  aceites: "bg-yellow-100 text-yellow-700",
-  miel: "bg-amber-100 text-amber-700",
-  condimentos: "bg-red-100 text-red-700",
+const categoryBadge: Record<string, string> = {
+  frutas:      "bg-terra/10 text-terra-dark",
+  verduras:    "bg-verde-light/15 text-verde",
+  aceites:     "bg-amber-50 text-amber-700",
+  miel:        "bg-amber-100 text-amber-800",
+  condimentos: "bg-red-50 text-red-600",
 };
 
 const categoryLabels: Record<string, string> = {
-  frutas: "Frutas",
-  verduras: "Verduras",
-  aceites: "Aceites",
-  miel: "Miel",
+  frutas:      "Frutas",
+  verduras:    "Verduras",
+  aceites:     "Aceites",
+  miel:        "Miel",
   condimentos: "Condimentos",
+};
+
+const categoryGradient: Record<string, string> = {
+  frutas:      "from-terra/8 to-crema",
+  verduras:    "from-verde-suave to-crema",
+  aceites:     "from-amber-50 to-crema",
+  miel:        "from-amber-100/50 to-crema",
+  condimentos: "from-red-50 to-crema",
 };
 
 export default function ProductCard({ product }: Props) {
   const { addItem, items } = useCart();
-  const [added, setAdded] = useState(false);
+  const [added, setAdded]           = useState(false);
   const [displayPrice, setDisplayPrice] = useState(product.price);
-  const [isAvailable, setIsAvailable] = useState(product.available);
+  const [isAvailable, setIsAvailable]   = useState(product.available);
 
   useEffect(() => {
     const overrides = getPriceOverrides();
@@ -49,63 +57,71 @@ export default function ProductCard({ product }: Props) {
 
   return (
     <div
-      className={`bg-white rounded-2xl overflow-hidden card-hover flex flex-col ${
-        !isAvailable ? "opacity-60" : ""
+      className={`group bg-white rounded-2xl overflow-hidden card-hover flex flex-col border border-crema-dark/40 transition-all duration-200 ${
+        !isAvailable ? "opacity-55" : ""
       }`}
     >
-      {/* Emoji section */}
-      <div className="bg-crema/60 flex items-center justify-center py-8 text-6xl select-none">
-        {product.emoji}
+      {/* Emoji area */}
+      <div
+        className={`relative bg-gradient-to-b ${categoryGradient[product.category]} flex items-center justify-center py-8 select-none overflow-hidden`}
+      >
+        <span className="text-6xl group-hover:scale-110 transition-transform duration-300 inline-block drop-shadow-sm">
+          {product.emoji}
+        </span>
+
+        {/* In-cart badge */}
+        {inCart && (
+          <span className="absolute top-2.5 right-2.5 bg-verde text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
+            {inCart.quantity} ×
+          </span>
+        )}
+
+        {/* Category badge */}
+        <span
+          className={`absolute bottom-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
+            categoryBadge[product.category]
+          }`}
+        >
+          {categoryLabels[product.category]}
+        </span>
       </div>
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="font-display font-semibold text-verde text-base leading-snug">
-            {product.name}
-          </h3>
-          <span
-            className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0 ${
-              categoryColors[product.category]
-            }`}
-          >
-            {categoryLabels[product.category]}
-          </span>
-        </div>
+        <h3 className="font-display font-bold text-verde text-[15px] leading-snug mb-1">
+          {product.name}
+        </h3>
 
-        <p className="text-xs text-texto/50 mb-3 leading-relaxed line-clamp-2">
+        <p className="text-[11px] text-texto/45 mb-3 leading-relaxed line-clamp-2 flex-1">
           {product.description}
         </p>
 
-        <div className="mt-auto">
-          <div className="flex items-end justify-between mb-3">
-            <div>
-              <span
-                className={`font-bold text-lg ${
-                  displayPrice === 0 ? "text-terra text-sm" : "text-verde"
-                }`}
-              >
-                {formatPrice(displayPrice)}
-              </span>
-              {displayPrice > 0 && (
-                <span className="text-xs text-texto/40 ml-1">/ {product.unit}</span>
-              )}
-            </div>
-            {inCart && (
-              <span className="text-xs text-verde-light font-semibold">
-                {inCart.quantity} en carrito
+        <div className="mt-auto space-y-2.5">
+          {/* Price */}
+          <div className="flex items-baseline gap-1">
+            <span
+              className={`font-display font-black text-xl leading-none ${
+                displayPrice === 0 ? "text-terra text-sm font-sans font-semibold" : "text-verde"
+              }`}
+            >
+              {formatPrice(displayPrice)}
+            </span>
+            {displayPrice > 0 && (
+              <span className="text-[11px] text-texto/35 font-medium">
+                / {product.unit}
               </span>
             )}
           </div>
 
+          {/* Add button */}
           <button
             onClick={handleAdd}
             disabled={!isAvailable}
-            className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+            className={`w-full py-2.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 ${
               !isAvailable
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                ? "bg-crema-dark text-texto/30 cursor-not-allowed"
                 : added
-                ? "bg-verde-light text-white scale-95"
+                ? "bg-verde-light text-white scale-[0.97]"
                 : "bg-verde text-white hover:bg-verde-mid active:scale-95"
             }`}
           >

@@ -35,6 +35,7 @@ const config: Config = {
         float: "float 4s ease-in-out infinite",
         "fade-up": "fadeUp 0.6s ease forwards",
         "pulse-soft": "pulseSoft 2s ease-in-out infinite",
+        marquee: "marquee 22s linear infinite",
       },
       keyframes: {
         float: {
@@ -48,6 +49,10 @@ const config: Config = {
         pulseSoft: {
           "0%, 100%": { boxShadow: "0 0 0 0 rgba(37, 211, 102, 0.4)" },
           "50%": { boxShadow: "0 0 0 12px rgba(37, 211, 102, 0)" },
+        },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-33.333%)" },
         },
       },
     },
