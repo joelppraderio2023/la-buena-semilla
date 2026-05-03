@@ -59,13 +59,17 @@ function StepBar({ current }: { current: number }) {
 
 export default function CheckoutPage() {
   const { items, total, clearCart, itemCount } = useCart();
-  const [nombre, setNombre]       = useState("");
-  const [telefono, setTelefono]   = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [delivery, setDelivery]   = useState<DeliveryMethod>("retiro");
-  const [payment, setPayment]     = useState<PaymentMethod>("efectivo");
-  const [confirmed, setConfirmed] = useState(false);
-  const [errors, setErrors]       = useState<Record<string, string>>({});
+  const [nombre, setNombre]         = useState("");
+  const [telefono, setTelefono]     = useState("");
+  const [direccion, setDireccion]   = useState("");
+  const [delivery, setDelivery]     = useState<DeliveryMethod>("retiro");
+  const [payment, setPayment]       = useState<PaymentMethod>("efectivo");
+  const [confirmed, setConfirmed]   = useState(false);
+  const [errors, setErrors]         = useState<Record<string, string>>({});
+  const [loadingMP, setLoadingMP]   = useState(false);
+  const [mpError, setMpError]       = useState("");
+
+  const hasUnpricedItems = items.some((i) => i.price === 0);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -93,17 +97,45 @@ export default function CheckoutPage() {
       delivery === "retiro"
         ? "Entrega: Retiro en tienda (Moreno 3829, San Martín)"
         : `Envío a: ${direccion}`,
-      `Pago: ${payment === "efectivo" ? "Efectivo" : "Mercado Pago"}`,
+      `Pago: Efectivo`,
       "",
       "Gracias! 😊",
     ];
     return encodeURIComponent(lines.join("\n"));
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const e = validate();
     if (Object.keys(e).length > 0) { setErrors(e); return; }
     setErrors({});
+
+    if (payment === "mercadopago") {
+      setLoadingMP(true);
+      setMpError("");
+      try {
+        const res = await fetch("/.netlify/functions/create-preference", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: items.filter((i) => i.price > 0),
+            nombre,
+            telefono,
+            external_reference: `order-${Date.now()}`,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.init_point) {
+          throw new Error("No se pudo crear el pago");
+        }
+        clearCart();
+        window.location.href = data.init_point;
+      } catch {
+        setMpError("Hubo un error al conectar con Mercado Pago. Intentá de nuevo o pagá en efectivo.");
+        setLoadingMP(false);
+      }
+      return;
+    }
+
     setConfirmed(true);
     clearCart();
   };
@@ -126,7 +158,7 @@ export default function CheckoutPage() {
     );
   }
 
-  /* ── Success ─── */
+  /* ── Success (efectivo) ─── */
   if (confirmed) {
     const msg = buildWhatsAppMessage();
     return (
@@ -277,6 +309,13 @@ export default function CheckoutPage() {
                 <span className="w-6 h-6 bg-verde text-white rounded-full text-xs flex items-center justify-center font-black">3</span>
                 Método de pago
               </h2>
+
+              {hasUnpricedItems && payment === "mercadopago" && (
+                <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-xs text-amber-700 leading-relaxed">
+                  Algunos productos tienen precio a confirmar y no se incluyen en el pago online. El resto se cobra por Mercado Pago y los artículos sin precio los coordinamos aparte.
+                </div>
+              )}
+
               <div className="grid sm:grid-cols-2 gap-3">
                 <button
                   onClick={() => setPayment("efectivo")}
@@ -291,15 +330,23 @@ export default function CheckoutPage() {
                   <div className="text-[11px] text-texto/45 mt-0.5">Al recibir o retirar</div>
                 </button>
 
-                <div className="text-left p-4 rounded-xl border-2 border-crema-dark/60 opacity-50 cursor-not-allowed relative">
+                <button
+                  onClick={() => setPayment("mercadopago")}
+                  className={`text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                    payment === "mercadopago"
+                      ? "border-[#009ee3] bg-blue-50"
+                      : "border-crema-dark hover:border-[#009ee3]/40"
+                  }`}
+                >
                   <div className="text-2xl mb-2 select-none">💳</div>
-                  <div className="font-bold text-sm text-verde">Mercado Pago</div>
-                  <div className="text-[11px] text-texto/45 mt-0.5">Próximamente</div>
-                  <span className="absolute top-3 right-3 bg-terra/15 text-terra text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
-                    Pronto
-                  </span>
-                </div>
+                  <div className="font-bold text-sm text-[#009ee3]">Mercado Pago</div>
+                  <div className="text-[11px] text-texto/45 mt-0.5">Tarjeta, débito o saldo</div>
+                </button>
               </div>
+
+              {mpError && (
+                <p className="text-xs text-red-500 mt-3 bg-red-50 rounded-xl px-4 py-2">{mpError}</p>
+              )}
             </div>
           </div>
 
@@ -335,12 +382,25 @@ export default function CheckoutPage() {
 
               <button
                 onClick={handleConfirm}
-                className="w-full bg-terra hover:bg-terra-dark text-white py-3.5 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-terra/20"
+                disabled={loadingMP}
+                className={`w-full py-3.5 rounded-xl font-black text-sm transition-all shadow-lg active:scale-95 ${
+                  loadingMP
+                    ? "bg-crema-dark text-texto/40 cursor-not-allowed"
+                    : payment === "mercadopago"
+                    ? "bg-[#009ee3] hover:bg-[#0086c8] text-white hover:scale-[1.02] shadow-blue-500/20"
+                    : "bg-terra hover:bg-terra-dark text-white hover:scale-[1.02] shadow-terra/20"
+                }`}
               >
-                Confirmar pedido →
+                {loadingMP
+                  ? "Conectando con MP..."
+                  : payment === "mercadopago"
+                  ? "Pagar con Mercado Pago →"
+                  : "Confirmar pedido →"}
               </button>
               <p className="text-[10px] text-crema/25 text-center mt-3 leading-relaxed">
-                Te contactaremos por WhatsApp para coordinar la entrega.
+                {payment === "mercadopago"
+                  ? "Serás redirigido a Mercado Pago para completar el pago."
+                  : "Te contactaremos por WhatsApp para coordinar la entrega."}
               </p>
             </div>
           </div>
