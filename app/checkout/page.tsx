@@ -7,7 +7,6 @@ import { formatPrice } from "@/lib/priceStore";
 import { WHATSAPP_NUMBER } from "@/data/products";
 
 type PaymentMethod  = "efectivo" | "mercadopago";
-type DeliveryMethod = "retiro" | "envio";
 
 const WA_ICON = (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 shrink-0">
@@ -62,7 +61,6 @@ export default function CheckoutPage() {
   const [nombre, setNombre]         = useState("");
   const [telefono, setTelefono]     = useState("");
   const [direccion, setDireccion]   = useState("");
-  const [delivery, setDelivery]     = useState<DeliveryMethod>("retiro");
   const [payment, setPayment]       = useState<PaymentMethod>("efectivo");
   const [confirmed, setConfirmed]   = useState(false);
   const [errors, setErrors]         = useState<Record<string, string>>({});
@@ -75,7 +73,7 @@ export default function CheckoutPage() {
     const e: Record<string, string> = {};
     if (!nombre.trim())   e.nombre   = "Ingresá tu nombre";
     if (!telefono.trim()) e.telefono = "Ingresá tu teléfono";
-    if (delivery === "envio" && !direccion.trim())
+    if (!direccion.trim())
       e.direccion = "Ingresá la dirección de envío";
     return e;
   };
@@ -94,9 +92,7 @@ export default function CheckoutPage() {
       "",
       `Nombre: ${nombre}`,
       `Teléfono: ${telefono}`,
-      delivery === "retiro"
-        ? "Entrega: Retiro en tienda (Moreno 3829, San Martín)"
-        : `Envío a: ${direccion}`,
+      `Envío a: ${direccion}`,
       `Pago: Efectivo`,
       "",
       "Gracias! 😊",
@@ -261,46 +257,27 @@ export default function CheckoutPage() {
 
             {/* Entrega */}
             <div className="bg-white rounded-2xl p-6 border border-crema-dark/40">
-              <h2 className="font-display font-black text-verde text-lg mb-5 flex items-center gap-2">
+              <h2 className="font-display font-black text-verde text-lg mb-1 flex items-center gap-2">
                 <span className="w-6 h-6 bg-verde text-white rounded-full text-xs flex items-center justify-center font-black">2</span>
-                Entrega
+                Envío a domicilio
               </h2>
-              <div className="grid sm:grid-cols-2 gap-3 mb-4">
-                {[
-                  { id: "retiro", label: "Retiro en tienda", sub: "Moreno 3829, San Martín", emoji: "🏪" },
-                  { id: "envio",  label: "Envío a domicilio", sub: "Coordinamos por WhatsApp", emoji: "🛵" },
-                ].map((opt) => (
-                  <button
-                    key={opt.id}
-                    onClick={() => setDelivery(opt.id as DeliveryMethod)}
-                    className={`text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-                      delivery === opt.id
-                        ? "border-verde bg-verde-suave"
-                        : "border-crema-dark hover:border-verde/30"
-                    }`}
-                  >
-                    <div className="text-2xl mb-2 select-none">{opt.emoji}</div>
-                    <div className="font-bold text-sm text-verde">{opt.label}</div>
-                    <div className="text-[11px] text-texto/45 mt-0.5">{opt.sub}</div>
-                  </button>
-                ))}
+              <p className="text-[11px] text-texto/40 mb-5 ml-8">
+                🛵 Entregas de 18:00 a 20:00 hs · Pedidos hasta las 16:00 hs
+              </p>
+              <div>
+                <label className="block text-[11px] font-bold text-texto/50 mb-1.5 uppercase tracking-wide">
+                  Dirección de envío *
+                </label>
+                <input
+                  value={direccion}
+                  onChange={(e) => setDireccion(e.target.value)}
+                  placeholder="Calle 123, Piso 2, San Martín"
+                  className={inputClass("direccion")}
+                />
+                {errors.direccion && (
+                  <p className="text-xs text-red-500 mt-1">{errors.direccion}</p>
+                )}
               </div>
-              {delivery === "envio" && (
-                <div>
-                  <label className="block text-[11px] font-bold text-texto/50 mb-1.5 uppercase tracking-wide">
-                    Dirección de envío *
-                  </label>
-                  <input
-                    value={direccion}
-                    onChange={(e) => setDireccion(e.target.value)}
-                    placeholder="Calle 123, Piso 2, San Martín"
-                    className={inputClass("direccion")}
-                  />
-                  {errors.direccion && (
-                    <p className="text-xs text-red-500 mt-1">{errors.direccion}</p>
-                  )}
-                </div>
-              )}
             </div>
 
             {/* Pago */}

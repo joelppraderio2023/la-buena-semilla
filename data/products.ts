@@ -65,4 +65,4 @@ export const categories = [
 
 export const WHATSAPP_NUMBER = "5491158482772";
 export const STORE_ADDRESS = "Moreno 3829, San Martín, Buenos Aires";
-export const STORE_HOURS = "Lunes a Sábado, 8:00 – 20:00 hs";
+export const STORE_HOURS = "Pedidos: 9:00 – 16:00 hs · Entregas: 18:00 – 20:00 hs";

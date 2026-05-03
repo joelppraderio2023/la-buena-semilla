@@ -78,7 +78,7 @@ const marqueeItems = [
   "Aceites artesanales",
   "Miel natural",
   "Envío a domicilio",
-  "Retiro en tienda",
+  "Entregas 18 a 20 hs",
   "San Martín, Bs As",
   "Pedidos por WhatsApp",
 ];
@@ -100,9 +100,9 @@ const features = [
     desc: "Respondemos rápido por WhatsApp para cualquier consulta o pedido especial.",
   },
   {
-    icon: "🏪",
-    title: "Retiro en tienda",
-    desc: `Pasá a buscar tu pedido en ${STORE_ADDRESS}.`,
+    icon: "⏰",
+    title: "Pedidos hasta las 16 hs",
+    desc: "Hacé tu pedido antes de las 4 de la tarde y lo recibís el mismo día entre las 6 y las 8 de la noche.",
   },
 ];
 
@@ -153,7 +153,7 @@ export default function HomePage() {
 
             <p className="text-crema/55 text-lg leading-relaxed mb-10 max-w-md">
               Frutas, verduras y productos naturales con la frescura de siempre.
-              Pedidos online, retiro o envío a domicilio en San Martín.
+              Pedidos online con envío a domicilio en San Martín. Pedís hasta las 16, recibís entre las 18 y las 20 hs.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-10">
