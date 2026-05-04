@@ -1,6 +1,7 @@
 "use client";
 
 import { Product } from "@/data/products";
+import { productImages } from "@/data/imageMap";
 import { useCart } from "@/lib/CartContext";
 import { formatPrice, loadOverrides, calcDescuento } from "@/lib/priceStore";
 import { useState, useEffect } from "react";
@@ -41,6 +42,7 @@ export default function ProductCard({ product }: Props) {
   const [enOferta, setEnOferta]         = useState(false);
   const [precioOferta, setPrecioOferta] = useState(0);
   const [loaded, setLoaded]             = useState(false);
+  const [imgError, setImgError]         = useState(false);
 
   useEffect(() => {
     loadOverrides().then((overrides) => {
@@ -59,9 +61,10 @@ export default function ProductCard({ product }: Props) {
 
   if (loaded && !isAvailable) return null;
 
-  const inCart   = items.find((i) => i.id === product.id);
-  const descuento = enOferta ? calcDescuento(displayPrice, precioOferta) : 0;
+  const inCart      = items.find((i) => i.id === product.id);
+  const descuento   = enOferta ? calcDescuento(displayPrice, precioOferta) : 0;
   const precioFinal = enOferta && precioOferta > 0 ? precioOferta : displayPrice;
+  const imageUrl    = !imgError ? productImages[product.id] : undefined;
 
   const handleAdd = () => {
     addItem({ ...product, price: precioFinal });
@@ -77,37 +80,70 @@ export default function ProductCard({ product }: Props) {
           : "border-crema-dark/40"
       }`}
     >
-      {/* Emoji area */}
-      <div
-        className={`relative bg-gradient-to-b ${categoryGradient[product.category]} flex items-center justify-center py-8 select-none overflow-hidden`}
-      >
-        <span className="text-6xl group-hover:scale-110 transition-transform duration-300 inline-block drop-shadow-sm">
-          {product.emoji}
-        </span>
+      {/* Media area — foto o emoji */}
+      {imageUrl ? (
+        <div className="relative overflow-hidden h-36 sm:h-40">
+          <img
+            src={imageUrl}
+            alt={product.name}
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          {/* Overlay suave */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
-        {/* Descuento badge */}
-        {enOferta && descuento > 0 && (
-          <span className="absolute top-2.5 left-2.5 bg-terra text-white text-[10px] font-black px-2 py-0.5 rounded-full leading-none">
-            -{descuento}%
+          {/* Descuento badge */}
+          {enOferta && descuento > 0 && (
+            <span className="absolute top-2.5 left-2.5 bg-terra text-white text-[10px] font-black px-2 py-0.5 rounded-full leading-none shadow">
+              -{descuento}%
+            </span>
+          )}
+
+          {/* In-cart badge */}
+          {inCart && (
+            <span className="absolute top-2.5 right-2.5 bg-verde text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none shadow">
+              {inCart.quantity} ×
+            </span>
+          )}
+
+          {/* Category badge */}
+          <span
+            className={`absolute bottom-2.5 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full shadow-sm ${
+              categoryBadge[product.category]
+            } ${enOferta && descuento > 0 ? "right-2.5" : "left-2.5"}`}
+          >
+            {categoryLabels[product.category]}
           </span>
-        )}
-
-        {/* In-cart badge */}
-        {inCart && (
-          <span className="absolute top-2.5 right-2.5 bg-verde text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
-            {inCart.quantity} ×
-          </span>
-        )}
-
-        {/* Category badge */}
-        <span
-          className={`absolute bottom-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
-            categoryBadge[product.category]
-          } ${enOferta && descuento > 0 ? "left-auto right-2.5" : ""}`}
+        </div>
+      ) : (
+        <div
+          className={`relative bg-gradient-to-b ${categoryGradient[product.category]} flex items-center justify-center py-8 select-none overflow-hidden`}
         >
-          {categoryLabels[product.category]}
-        </span>
-      </div>
+          <span className="text-6xl group-hover:scale-110 transition-transform duration-300 inline-block drop-shadow-sm">
+            {product.emoji}
+          </span>
+
+          {enOferta && descuento > 0 && (
+            <span className="absolute top-2.5 left-2.5 bg-terra text-white text-[10px] font-black px-2 py-0.5 rounded-full leading-none">
+              -{descuento}%
+            </span>
+          )}
+
+          {inCart && (
+            <span className="absolute top-2.5 right-2.5 bg-verde text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
+              {inCart.quantity} ×
+            </span>
+          )}
+
+          <span
+            className={`absolute bottom-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
+              categoryBadge[product.category]
+            } ${enOferta && descuento > 0 ? "left-auto right-2.5" : ""}`}
+          >
+            {categoryLabels[product.category]}
+          </span>
+        </div>
+      )}
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1">
