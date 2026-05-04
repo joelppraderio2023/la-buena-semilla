@@ -180,7 +180,7 @@ export default function AdminPage() {
             <div className="flex-1">Producto</div>
             <div className="w-28 shrink-0">Precio normal</div>
             <div className="w-36 shrink-0 text-terra">🔥 Oferta del día</div>
-            <div className="w-20 shrink-0">Disponible</div>
+            <div className="w-20 shrink-0">Visible</div>
           </div>
 
           <div className="divide-y divide-crema-dark/30">
@@ -270,7 +270,7 @@ export default function AdminPage() {
                     >
                       <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${available ? "translate-x-4" : "translate-x-0.5"}`} />
                     </button>
-                    <span className="text-xs text-texto/40 hidden sm:inline">{available ? "Sí" : "No"}</span>
+                    <span className="text-xs text-texto/40 hidden sm:inline">{available ? "Visible" : "Oculto"}</span>
                   </div>
                 </div>
               );

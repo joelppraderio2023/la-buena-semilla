@@ -40,6 +40,7 @@ export default function ProductCard({ product }: Props) {
   const [isAvailable, setIsAvailable]   = useState(product.available);
   const [enOferta, setEnOferta]         = useState(false);
   const [precioOferta, setPrecioOferta] = useState(0);
+  const [loaded, setLoaded]             = useState(false);
 
   useEffect(() => {
     loadOverrides().then((overrides) => {
@@ -52,8 +53,11 @@ export default function ProductCard({ product }: Props) {
           setPrecioOferta(ov.precioOferta);
         }
       }
+      setLoaded(true);
     });
   }, [product.id]);
+
+  if (loaded && !isAvailable) return null;
 
   const inCart   = items.find((i) => i.id === product.id);
   const descuento = enOferta ? calcDescuento(displayPrice, precioOferta) : 0;
@@ -71,7 +75,7 @@ export default function ProductCard({ product }: Props) {
         enOferta
           ? "border-terra/30 shadow-sm shadow-terra/10"
           : "border-crema-dark/40"
-      } ${!isAvailable ? "opacity-55" : ""}`}
+      }`}
     >
       {/* Emoji area */}
       <div
