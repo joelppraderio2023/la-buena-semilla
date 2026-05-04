@@ -14,7 +14,6 @@ const categoryBadge: Record<string, string> = {
   frutas:      "bg-terra/10 text-terra-dark",
   verduras:    "bg-verde-light/15 text-verde",
   varios:      "bg-amber-50 text-amber-700",
-  miel:        "bg-amber-100 text-amber-800",
   condimentos: "bg-red-50 text-red-600",
 };
 
@@ -22,7 +21,6 @@ const categoryLabels: Record<string, string> = {
   frutas:      "Frutas",
   verduras:    "Verduras",
   varios:      "Varios",
-  miel:        "Miel",
   condimentos: "Condimentos",
 };
 
@@ -30,7 +28,6 @@ const categoryGradient: Record<string, string> = {
   frutas:      "from-terra/8 to-crema",
   verduras:    "from-verde-suave to-crema",
   varios:      "from-amber-50 to-crema",
-  miel:        "from-amber-100/50 to-crema",
   condimentos: "from-red-50 to-crema",
 };
 

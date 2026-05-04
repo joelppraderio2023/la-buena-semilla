@@ -1,4 +1,4 @@
-export type Category = "frutas" | "verduras" | "varios" | "miel" | "condimentos";
+export type Category = "frutas" | "verduras" | "varios" | "condimentos";
 
 export interface Product {
   id: string;
@@ -138,9 +138,8 @@ export const products: Product[] = [
   { id: "mix-blends",                 name: "Mix Blends",                            category: "varios", price: 4000,  unit: "unidad",       description: "Mix de blends de especias seleccionadas para distintas preparaciones", emoji: "🫙", available: true },
   { id: "mani-tostado",               name: "Maní Tostado c/Cáscara",                category: "varios", price: 2500,  unit: "250g",         description: "Maní tostado con cáscara, crocante y natural",                       emoji: "🥜", available: true },
 
-  // Miel
-  { id: "miel-1kg",  name: "Miel", category: "miel", price: 0, unit: "1kg",  description: "Miel natural pura, sin procesar", emoji: "🍯", available: true, featured: true },
-  { id: "miel-500g", name: "Miel", category: "miel", price: 0, unit: "500g", description: "Miel natural pura, sin procesar", emoji: "🍯", available: true },
+  { id: "miel-1kg",  name: "Miel", category: "varios", price: 0, unit: "1kg",  description: "Miel natural pura, sin procesar", emoji: "🍯", available: true, featured: true },
+  { id: "miel-500g", name: "Miel", category: "varios", price: 0, unit: "500g", description: "Miel natural pura, sin procesar", emoji: "🍯", available: true },
 
   // Condimentos
   { id: "provenzal",            name: "Provenzal",                  category: "condimentos", price: 2500, unit: "35g",        description: "Provenzal clásico, ideal para carnes y vegetales",     emoji: "🌿", available: true },
@@ -187,7 +186,6 @@ export const categories = [
   { id: "frutas",      label: "Frutas",      emoji: "🍎" },
   { id: "verduras",    label: "Verduras",    emoji: "🥦" },
   { id: "varios",      label: "Varios",      emoji: "🛍️" },
-  { id: "miel",        label: "Miel",        emoji: "🍯" },
   { id: "condimentos", label: "Condimentos", emoji: "🌿" },
 ];
 
