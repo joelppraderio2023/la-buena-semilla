@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { products, categories } from "@/data/products";
 import { loadOverrides, saveOverrides, invalidateCache, PriceOverrides, calcDescuento } from "@/lib/priceStore";
 
-const ADMIN_PASSWORD = "admin123";
+const ADMIN_PASSWORD = "Salvacion777+";
 
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -100,7 +100,6 @@ export default function AdminPage() {
               Ingresar
             </button>
           </form>
-          <p className="text-[10px] text-texto/30 text-center mt-4">Contraseña por defecto: admin123</p>
         </div>
       </div>
     );
