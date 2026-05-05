@@ -264,7 +264,7 @@ export default function CheckoutPage() {
                 >
                   <div className="text-2xl mb-2 select-none">💵</div>
                   <div className="font-bold text-sm text-verde">Efectivo</div>
-                  <div className="text-[11px] text-texto/45 mt-0.5">Al recibir o retirar</div>
+                  <div className="text-[11px] text-texto/45 mt-0.5">Contra entrega</div>
                 </button>
 
                 <button
