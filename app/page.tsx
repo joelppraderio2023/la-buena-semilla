@@ -84,8 +84,8 @@ const floatDelays = [0, 0.5, 1, 1.5, 2, 0.8, 1.2, 0.3, 1.8, 0.6, 1.4, 2.2];
 const marqueeItems = [
   "Frutas frescas",
   "Verduras del día",
-  "Aceites artesanales",
-  "Miel natural",
+  "Conservas y salsas",
+  "Condimentos artesanales",
   "Envío a domicilio",
   "Entregas 18 a 20 hs",
   "San Martín, Bs As",
