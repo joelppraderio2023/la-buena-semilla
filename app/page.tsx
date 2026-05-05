@@ -66,7 +66,7 @@ function OfertasDelDia() {
 }
 
 const heroPhotos = [
-  { src: "/images/manzana-roja.jpg",   alt: "Manzana roja" },
+  { src: "/images/mango.jfif",          alt: "Mango" },
   { src: "/images/frutilla.jfif",      alt: "Frutilla" },
   { src: "/images/palta.jfif",         alt: "Palta" },
   { src: "/images/naranja.jfif",       alt: "Naranja" },
