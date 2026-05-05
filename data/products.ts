@@ -185,7 +185,7 @@ export const categories = [
   { id: "todos",       label: "Todos",       emoji: "🛒" },
   { id: "frutas",      label: "Frutas",      emoji: "🍎" },
   { id: "verduras",    label: "Verduras",    emoji: "🥦" },
-  { id: "varios",      label: "Varios",      emoji: "🫙" },
+  { id: "varios",      label: "Varios",      emoji: "🥫" },
   { id: "condimentos", label: "Condimentos", emoji: "🌿" },
 ];
 
