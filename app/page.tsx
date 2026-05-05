@@ -65,10 +65,19 @@ function OfertasDelDia() {
   );
 }
 
-const heroEmojis = [
-  "🍎", "🥦", "🍊", "🥕",
-  "🍋", "🫒", "🍅", "🍯",
-  "🌿", "🍇", "🥬", "🌶️",
+const heroPhotos = [
+  { src: "/images/manzana-roja.jpg",   alt: "Manzana roja" },
+  { src: "/images/frutilla.jfif",      alt: "Frutilla" },
+  { src: "/images/palta.jfif",         alt: "Palta" },
+  { src: "/images/naranja.jfif",       alt: "Naranja" },
+  { src: "/images/tomate.jfif",        alt: "Tomate" },
+  { src: "/images/brocoli.jfif",       alt: "Brócoli" },
+  { src: "/images/zanahoria.jfif",     alt: "Zanahoria" },
+  { src: "/images/kiwi.jfif",          alt: "Kiwi" },
+  { src: "/images/arandano.jfif",      alt: "Arándano" },
+  { src: "/images/choclo.jfif",        alt: "Choclo" },
+  { src: "/images/berenjena.jfif",     alt: "Berenjena" },
+  { src: "/images/lechuga.jfif",       alt: "Lechuga" },
 ];
 const floatDelays = [0, 0.5, 1, 1.5, 2, 0.8, 1.2, 0.3, 1.8, 0.6, 1.4, 2.2];
 
@@ -191,17 +200,19 @@ export default function HomePage() {
             className="hidden lg:grid grid-cols-4 gap-3 py-8"
             style={{ animation: "fadeUp 0.7s ease-out 0.15s both" }}
           >
-            {heroEmojis.map((emoji, i) => (
+            {heroPhotos.map((photo, i) => (
               <div
                 key={i}
-                className="group bg-white/[0.06] hover:bg-white/[0.11] backdrop-blur-sm rounded-3xl aspect-square flex items-center justify-center text-4xl transition-all duration-300 border border-white/[0.06] cursor-default"
+                className="group rounded-3xl aspect-square overflow-hidden border border-white/[0.12] shadow-lg cursor-default"
                 style={{
                   animation: `float 4s ease-in-out ${floatDelays[i]}s infinite`,
                 }}
               >
-                <span className="group-hover:scale-110 transition-transform duration-300 inline-block select-none">
-                  {emoji}
-                </span>
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
               </div>
             ))}
           </div>
